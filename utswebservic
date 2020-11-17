@@ -1,0 +1,106 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+require APPPATH . '/libraries/REST_Controller.php';
+use Restserver\Libraries\REST_Controller;
+
+class penyakit extends REST_Controller {
+
+	function __constuct($config = 'rest') {
+		parent::__constuct($config);
+    }
+
+	//Menampilkan data 
+	public function index_get(){
+
+		$id = $this->get('id');
+		$pencegahan=[];
+		if ($id==''){
+			$data = $this->db->get('pencegahan')->result();
+			foreach($data as $row=>$key):
+				$pencegahan[]=["COL1"=>$key->COL1,
+			                "COL2"=>$COL2,
+			                "COL3"=>$key->COL3,
+							"COL4"=>$COL4,
+							"COL5"=>$key->COL5,
+							"COL6"=>$COL6,
+							"COL7"=>$key->COL7,
+			                "COL8hp"=>$key->COL8,
+			                "_links"=>[(object)["href=>pencegahan/{$key->COL1}",
+			                          "rel"=>"pencegahan",
+			                          "type"=>"GET"]]
+			         
+			                ];
+			 endforeach;
+
+		} else {
+			$this->db->where('COL1' , $id);
+			$data = $this->db->get('pencegahan')->result();
+
+		}
+		$result = ["took"=>$_SERVER["REQUEST_TIME_FLOAT"],
+	              "code"=>200,
+	              "message"=>"Response successfully",
+	              "data"=>$pencegahan];
+	    $this->Response($result,200);
+	}
+	
+ public function index_post(){
+        $data = array(
+                    'COL1' => $this->post('COL1'),
+                   'COL2' => $this->post('COL2'),
+				   'COL3' => $this->post('COL3'),
+				   'COL4' => $this->post('COL4'),
+				   'COL5' => $this->post('COL5'),
+				   'COL6' => $this->post('COL6'),
+				   'COL7' => $this->post('COL7'),
+				   'COL8' => $this->post('COL8'),
+        $insert = $this->db->insert('pencegahan', $data);
+        if($insert){
+            $result = ["took" => $_SERVER["REQUEST_TIME_FLOAT"],
+                       "code"=>201,
+                       "message"=>"Data has successfully added",
+                       "data"=>$data];
+            $this->response($result, 201);
+        }else{
+            $result = ["took"=>$_SERVER["REQUEST_TIME_FLOAT"],
+                       "code"=>502,
+                       "message"=>"Failed adding data",
+                       "data"=>null];
+            $this->response($result, 502);
+        }
+    }
+
+    function index_put(){
+        $id = $this->get('id');
+        $data = array(
+		            'COL1' => $this->put('COL1'),
+                    'COL2' => $this->put('COL2'),
+					'COL3' => $this->put('COL3'),
+					'COL4' => $this->put('COL4'),
+					'COL5' => $this->put('COL5'),
+					'COL6' => $this->put('COL6'),
+					'COL7' => $this->put('COL7'),
+					'COL8' => $this->put('COL8'));
+        $this->db->where('COL1', $id);
+        $update = $this->db->update('Pencegahan', $data);
+        if($update){
+            $this->response($data, 200);
+        } else{
+            $this->response(array('status' => 'fail', 502));
+        }
+    }
+
+    function index_delete() {
+        $id = $this->get('id');
+        $this->db->where('COL1, $id);
+        $delete = $this->db->delete('Pencegahan');
+        if ($delete) {
+            $this->response(array('status' => 'success'), 201);
+        } else{
+            $this->response(array('status' => 'fail', 502));
+        }
+    }
+}
+
+?>
